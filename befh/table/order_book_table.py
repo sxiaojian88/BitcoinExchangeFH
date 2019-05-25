@@ -112,9 +112,9 @@ class OrderBook(Table):
             self._trade[self.TRADE_QTY_INDEX]
         ]
 
-        for i in range(0, self._depth):
-            fields += self._bids[i]
-            fields += self._asks[i]
+        # for i in range(0, self._depth):
+        #     fields += self._bids[i]
+        #     fields += self._asks[i]
 
         return fields
 
@@ -221,7 +221,11 @@ class OrderBook(Table):
         self._trade[self.TRADE_TIMESTAMP_INDEX].value = trade['timestamp']
         self._prev_update_time.value = self._update_time.value
         self._update_time.value = current_timestamp
-        self._update_type.value = OrderBookUpdateTypeField.TRADE
+        if trade['side'] == 'buy':
+            self._update_type.value = 0
+        else:
+            self._update_type.value = 1
+
         self._trades_per_timestamp.setdefault(timestamp, []).append(
             trade_id)
 

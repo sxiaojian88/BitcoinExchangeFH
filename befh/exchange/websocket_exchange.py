@@ -38,7 +38,7 @@ class WebsocketExchange(RestApiExchange):
 
         if self._is_orders:
             callbacks = {
-                L2_BOOK: BookCallback(self._update_order_book_callback),
+                # L2_BOOK: BookCallback(self._update_order_book_callback),
                 TRADES: TradeCallback(self._update_trade_callback)
             }
         else:
@@ -133,21 +133,24 @@ class WebsocketExchange(RestApiExchange):
         instmt_info = self._instruments[self._instrument_mapping[pair]]
         trade = {}
         
-        utcstr_timestamp_exchanges = ['bitmex', 'okex']
+        utcstr_timestamp_exchanges = ['okex']
         str_timestamp_exchanges = ['bitstamp']
+        float_timestamp_exchanges = ['bitmex']
         if self._name.lower() in utcstr_timestamp_exchanges:
             timestamp = datetime.strptime(timestamp, '%Y-%m-%dT%H:%M:%S.%fZ')
             timestamp = timestamp.timestamp()
             trade['timestamp'] = timestamp
         elif self._name.lower() in str_timestamp_exchanges:
             trade['timestamp'] = float(timestamp)
+        elif self._name.lower() in float_timestamp_exchanges:
+            trade['timestamp'] = timestamp * 1000
         else:
             trade['timestamp'] = timestamp
 
         trade['id'] = order_id
         trade['price'] = float(price)
         trade['amount'] = float(amount)
-
+        trade['side'] = side
         current_timestamp = datetime.utcnow()
 
         if not instmt_info.update_trade(trade, current_timestamp):

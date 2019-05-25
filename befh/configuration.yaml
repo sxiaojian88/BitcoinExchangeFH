@@ -1,0 +1,15 @@
+subscriptions:
+    Binance:
+        instruments: 
+          - BTC/USDT
+    BitMEX:
+        instruments: 
+          - XBTUSD
+
+
+
+handlers:
+    sql:
+        connection: "sqlite:///order_book.db"
+        is_rotate: True
+        rotate_frequency: "%Y%m%d%H%M"
